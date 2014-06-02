@@ -8,37 +8,37 @@ import (
 )
 
 type executionerCmd struct {
-	program string
-	args []string
-	timeout timeout
+	program       string
+	args          []string
+	timeout       timeout
 	preconditions preconditions
-	streams streamCollection
+	streams       streamCollection
 }
 
 type timeout struct {
-	milliseconds  float64
-	response responseType
+	milliseconds float64
+	response     responseType
 }
 
 type responseType string
 
 type preconditions struct {
 	program string
-	args []string
-	output string
+	args    []string
+	output  string
 }
 
 type streamCollection struct {
-	stdin stream
-	stdout stream
-	stderr stream
+	stdin   stream
+	stdout  stream
+	stderr  stream
 	logging stream
 }
 
 type stream struct {
-	std standardStreamType
+	std    standardStreamType
 	inline string
-	file string
+	file   string
 }
 
 type standardStreamType string
@@ -69,11 +69,11 @@ func ParseExecutioner(file string) (executionerCmd, error) {
 	streams, _ := parseStreamCollection(viper.GetStringMap("streams"))
 
 	ecmd := executionerCmd{
-		program: viper.GetString("prog"),
-		args: viper.GetStringSlice("args"),
-		timeout: timeout,
+		program:       viper.GetString("prog"),
+		args:          viper.GetStringSlice("args"),
+		timeout:       timeout,
 		preconditions: preconds,
-		streams: streams,
+		streams:       streams,
 	}
 	return ecmd, nil
 }
@@ -81,15 +81,15 @@ func ParseExecutioner(file string) (executionerCmd, error) {
 func parseTimeout(m map[string]interface{}) (timeout, error) {
 	return timeout{
 		milliseconds: cast.ToFloat64(m["milliseconds"]),
-		response: responseType(cast.ToString(m["response"])),
+		response:     responseType(cast.ToString(m["response"])),
 	}, nil
 }
 
 func parsePreconditions(m map[string]interface{}) (preconditions, error) {
 	return preconditions{
 		program: cast.ToString(m["prog"]),
-		args: cast.ToStringSlice(m["args"]),
-		output: cast.ToString(m["output"]),
+		args:    cast.ToStringSlice(m["args"]),
+		output:  cast.ToString(m["output"]),
 	}, nil
 }
 
@@ -98,20 +98,19 @@ func parseStreamCollection(m map[string]interface{}) (streamCollection, error) {
 	stdout, _ := parseStream(cast.ToStringMapString(m["stdout"]))
 	stderr, _ := parseStream(cast.ToStringMapString(m["stderr"]))
 	logging, _ := parseStream(cast.ToStringMapString(m["logging"]))
-	
+
 	return streamCollection{
-		stdin: stdin,
-		stdout: stdout,
-		stderr: stderr,
+		stdin:   stdin,
+		stdout:  stdout,
+		stderr:  stderr,
 		logging: logging,
 	}, nil
 }
 
-
 func parseStream(m map[string]string) (stream, error) {
 	return stream{
 		inline: m["inline"],
-		std: standardStreamType(m["standard"]),
-		file: m["file"],
+		std:    standardStreamType(m["standard"]),
+		file:   m["file"],
 	}, nil
 }
