@@ -1,0 +1,23 @@
+---
+prog: dot
+args: [ -Tpng, -v ]
+timeout:
+  milliseconds: 500
+  response: LOG
+preconditions:
+  prog: dot
+  args: [ -V ]
+  output: "dot - graphviz version 2.38.0 (20140413.2041)"
+streams:
+  stdin:
+    inline: |
+      digraph G {
+        Hello -> World
+      }
+  stdout:
+    standard: out
+  stderr:
+    standard: err
+  logging:
+    file: /tmp/log.txt
+...
